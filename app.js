@@ -1,12 +1,14 @@
 const state = {
     objects: [],
     angle: 0,
+    totalLeftWeight: 0,
+    totalRightWeight: 0,
+    nextWeight: Math.floor(Math.random() * 10) + 1
 };
 
 const seesawPlank = document.getElementById('seesaw-plank');
 
 function render() {
-    // Önceki ağırlıkları temizle
     seesawPlank.querySelectorAll('.weight').forEach(w => w.remove());
     
     state.objects.forEach(item => {
@@ -30,24 +32,33 @@ function render() {
         seesawPlank.appendChild(weightElement);
     });
     
-    // Tahterevalliyi döndür
-    seesawPlank.style.transform = `translateY(-50%) rotate(${state.angle}deg)`;
+    seesawPlank.style.transform = `translate(-50%, -50%) rotate(${state.angle}deg)`;
+    
+    // Bilgi panellerini güncelle
+    document.getElementById('left-weight-value').textContent = `${state.totalLeftWeight.toFixed(1)} kg`;
+    document.getElementById('right-weight-value').textContent = `${state.totalRightWeight.toFixed(1)} kg`;
+    document.getElementById('next-weight-value').textContent = `${state.nextWeight}.0 kg`;
+    document.getElementById('tilt-angle-value').textContent = `${state.angle.toFixed(1)}°`;
 }
 
 function calculateSeesawState() {
-    let leftTorque = 0;
-    let rightTorque = 0;
+    let leftTorque = 0, rightTorque = 0;
+    let totalLeftWeight = 0, totalRightWeight = 0;
     
     state.objects.forEach(item => {
         const torque = item.weight * item.distance;
         if (item.side === 'left') {
             leftTorque += torque;
+            totalLeftWeight += item.weight;
         } else {
             rightTorque += torque;
+            totalRightWeight += item.weight;    
         }
     });
     
-    // Tork farkına göre açıyı hesapla, max ±30 derece
+    state.totalLeftWeight = totalLeftWeight;
+    state.totalRightWeight = totalRightWeight;
+    
     let angle = (rightTorque - leftTorque) / 10;
     state.angle = Math.max(-30, Math.min(30, angle));
 }
@@ -67,5 +78,7 @@ seesawPlank.addEventListener('click', (e) => {
     state.objects.push(newWeight);
     calculateSeesawState();
     render();
-    console.log(state);
 });
+
+// Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için
+render();

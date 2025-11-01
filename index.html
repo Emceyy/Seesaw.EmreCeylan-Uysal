@@ -5,17 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seesaw Simulation</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Seesaw Simulation</h1>
-
-    <div id="simulation-container">
-        <div id="seesaw-container">
-            <div id="seesaw-plank"></div>
-            <div id="pivot"></div>
+    <div class="app-container">
+        <h1>Seesaw Simulation</h1>
+        <div class="info-panels">
+            <div class="panel">
+                <span class="panel-label">LEFT WEIGHT</span>
+                <h2 id="left-weight-value" class="panel-value">0.0 kg</h2>
+            </div>
+            <div class="panel">
+                <span class="panel-label">NEXT WEIGHT</span>
+                <h2 id="next-weight-value" class="panel-value">0.0 kg</h2>
+            </div>
+            <div class="panel">
+                <span class="panel-label">RIGHT WEIGHT</span>
+                <h2 id="right-weight-value" class="panel-value">0.0 kg</h2>
+            </div>
+            <div class="panel">
+                <span class="panel-label">TILT ANGLE</span>
+                <h2 id="tilt-angle-value" class="panel-value">0.0°</h2>
+            </div>
+        </div>
+        <div id="simulation-container">
+            <div id="seesaw-container">
+                <div id="seesaw-plank"></div>
+                <div id="pivot"></div>
+            </div>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>

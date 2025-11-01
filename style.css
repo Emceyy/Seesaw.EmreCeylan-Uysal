@@ -1,0 +1,36 @@
+#simulation-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+    margin-top: 50px;
+}
+
+#seesaw-container {
+    position: relative;
+    width: 400px;
+    height: 100%;
+}
+
+#seesaw-plank {
+    width: 400px;
+    height: 20px;
+    background-color: #8B4513;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+#pivot {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 40px solid #654321;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+}

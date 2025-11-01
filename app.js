@@ -5,6 +5,35 @@ const state = {
 
 const seesawPlank = document.getElementById('seesaw-plank');
 
+function render() {
+    // Önceki ağırlıkları temizle
+    seesawPlank.querySelectorAll('.weight').forEach(w => w.remove());
+    
+    state.objects.forEach(item => {
+        const weightElement = document.createElement('div');
+        weightElement.className = 'weight';
+        weightElement.textContent = item.weight;
+        weightElement.style.position = 'absolute';
+        
+        weightElement.style.background = 'red';
+        weightElement.style.width = '30px';
+        weightElement.style.height = '30px';
+        weightElement.style.borderRadius = '50%';
+        weightElement.style.top = '-30px';
+        
+        const plankCenter = seesawPlank.offsetWidth / 2;
+        let leftPos = (item.side === 'left')
+            ? plankCenter - item.distance - 15
+            : plankCenter + item.distance - 15;
+        
+        weightElement.style.left = `${leftPos}px`;
+        seesawPlank.appendChild(weightElement);
+    });
+    
+    // Tahterevalliyi döndür
+    seesawPlank.style.transform = `translateY(-50%) rotate(${state.angle}deg)`;
+}
+
 function calculateSeesawState() {
     let leftTorque = 0;
     let rightTorque = 0;
@@ -37,5 +66,6 @@ seesawPlank.addEventListener('click', (e) => {
 
     state.objects.push(newWeight);
     calculateSeesawState();
-    console.log(state); // State'in güncellendiğini görmek için
+    render();
+    console.log(state);
 });

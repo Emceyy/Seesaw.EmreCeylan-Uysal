@@ -1,3 +1,8 @@
+body {
+    background-color: #f0f2f5;
+    font-family: sans-serif;
+}
+
 #simulation-container {
     position: relative;
     display: flex;
@@ -33,4 +38,13 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.weight {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
 }

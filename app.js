@@ -12,8 +12,8 @@ const seesawPlank = document.getElementById('seesaw-plank');
 const weightPreview = document.getElementById('weight-preview');
 const previewLine = document.getElementById('preview-line');
 const simulationContainer = document.getElementById('simulation-container');
-const resetButton = document.getElementById('reset-button'); // YENİ
-const logContainer = document.getElementById('log-container'); // YENİ
+const resetButton = document.getElementById('reset-button');
+const logContainer = document.getElementById('log-container');
 const HOVER_OFFSET_Y = 120;
 
 function render() {
@@ -72,13 +72,27 @@ function calculateSeesawState() {
     state.angle = Math.max(-30, Math.min(30, angle));
 }
 
-
 function logAction(message) {
     const logItem = document.createElement('div');
     logItem.className = 'log-item';
-    logItem.textContent = message;
+    // YENİ: İkonu ekle
+    logItem.innerHTML = `<span>📦</span> ${message}`; 
     logContainer.appendChild(logItem);
     logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+
+function saveState() {
+    localStorage.setItem('seesawState', JSON.stringify(state));
+}
+
+function loadState() {
+    const savedState = localStorage.getItem('seesawState');
+    if (savedState) {
+        Object.assign(state, JSON.parse(savedState));
+        return true;
+    }
+    return false;
 }
 
 seesawPlank.addEventListener('click', (e) => {
@@ -120,11 +134,10 @@ seesawPlank.addEventListener('click', (e) => {
         state.objects.push(newWeight);
         state.nextWeight = Math.floor(Math.random() * 10) + 1;
         
-  
         logAction(`${newWeight.weight}kg dropped on ${newWeight.side} side at ${newWeight.distance}px`);
-        
         calculateSeesawState();
         render();
+        saveState(); 
     }, { once: true });
 });
 
@@ -151,8 +164,8 @@ seesawPlank.addEventListener('mousemove', (e) => {
     weightPreview.style.top = `${y - HOVER_OFFSET_Y - size / 2}px`;
     
     previewLine.style.left = `${x}px`;
-    previewLine.style.top = `${y - HOVER_OFFSET_Y + 30}px`;
-    previewLine.style.height = `${HOVER_OFFSET_Y - 30}px`;
+    previewLine.style.top = `${y - HOVER_OFFSET_Y + (size / 2)}px`;
+    previewLine.style.height = `${HOVER_OFFSET_Y - (size / 2)}px`;
 });
 
 resetButton.addEventListener('click', () => {
@@ -160,9 +173,19 @@ resetButton.addEventListener('click', () => {
     state.angle = 0;
     state.totalLeftWeight = 0;
     state.totalRightWeight = 0;
+    localStorage.removeItem('seesawState'); // YENİ
     logContainer.innerHTML = '';
     render();
 });
+
+
+if (loadState()) { 
+    calculateSeesawState();
+ 
+    state.objects.forEach(obj => {
+        logAction(`${obj.weight}kg dropped on ${obj.side} side at ${obj.distance}px from center`);
+    });
+}
 
 // Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için
 render();

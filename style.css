@@ -144,3 +144,14 @@ body {
     color: #555;
     border-bottom: 1px solid #f0f0f0;
 }
+
+#reset-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.log-item span {
+    margin-right: 8px;
+}

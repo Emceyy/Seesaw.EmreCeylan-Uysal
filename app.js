@@ -12,6 +12,8 @@ const seesawPlank = document.getElementById('seesaw-plank');
 const weightPreview = document.getElementById('weight-preview');
 const previewLine = document.getElementById('preview-line');
 const simulationContainer = document.getElementById('simulation-container');
+const resetButton = document.getElementById('reset-button'); // YENİ
+const logContainer = document.getElementById('log-container'); // YENİ
 const HOVER_OFFSET_Y = 120;
 
 function render() {
@@ -58,7 +60,6 @@ function calculateSeesawState() {
             leftTorque += torque;
             totalLeftWeight += item.weight;
         } else {
-            // Tork hatası burada düzeltildi
             rightTorque += torque;
             totalRightWeight += item.weight;
         }
@@ -69,6 +70,15 @@ function calculateSeesawState() {
     
     let angle = (rightTorque - leftTorque) / 10;
     state.angle = Math.max(-30, Math.min(30, angle));
+}
+
+
+function logAction(message) {
+    const logItem = document.createElement('div');
+    logItem.className = 'log-item';
+    logItem.textContent = message;
+    logContainer.appendChild(logItem);
+    logContainer.scrollTop = logContainer.scrollHeight;
 }
 
 seesawPlank.addEventListener('click', (e) => {
@@ -109,6 +119,10 @@ seesawPlank.addEventListener('click', (e) => {
         fallingWeight.remove();
         state.objects.push(newWeight);
         state.nextWeight = Math.floor(Math.random() * 10) + 1;
+        
+  
+        logAction(`${newWeight.weight}kg dropped on ${newWeight.side} side at ${newWeight.distance}px`);
+        
         calculateSeesawState();
         render();
     }, { once: true });
@@ -137,8 +151,17 @@ seesawPlank.addEventListener('mousemove', (e) => {
     weightPreview.style.top = `${y - HOVER_OFFSET_Y - size / 2}px`;
     
     previewLine.style.left = `${x}px`;
-    previewLine.style.top = `${y - HOVER_OFFSET_Y}px`;
-    previewLine.style.height = `${HOVER_OFFSET_Y}px`;
+    previewLine.style.top = `${y - HOVER_OFFSET_Y + 30}px`;
+    previewLine.style.height = `${HOVER_OFFSET_Y - 30}px`;
+});
+
+resetButton.addEventListener('click', () => {
+    state.objects = [];
+    state.angle = 0;
+    state.totalLeftWeight = 0;
+    state.totalRightWeight = 0;
+    logContainer.innerHTML = '';
+    render();
 });
 
 // Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için

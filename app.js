@@ -1,3 +1,5 @@
+const COLOR_PALETTE = ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6', '#1abc9c', '#e67e22'];
+
 const state = {
     objects: [],
     angle: 0,
@@ -6,11 +8,11 @@ const state = {
     nextWeight: Math.floor(Math.random() * 10) + 1
 };
 
+const seesawPlank = document.getElementById('seesaw-plank');
 const weightPreview = document.getElementById('weight-preview');
 const previewLine = document.getElementById('preview-line');
 const simulationContainer = document.getElementById('simulation-container');
 const HOVER_OFFSET_Y = 120;
-const seesawPlank = document.getElementById('seesaw-plank');
 
 function render() {
     seesawPlank.querySelectorAll('.weight').forEach(w => w.remove());
@@ -21,16 +23,17 @@ function render() {
         weightElement.textContent = item.weight;
         weightElement.style.position = 'absolute';
         
-        weightElement.style.background = 'red';
-        weightElement.style.width = '30px';
-        weightElement.style.height = '30px';
+        weightElement.style.background = item.color;
+        weightElement.style.width = `${item.size}px`;
+        weightElement.style.height = `${item.size}px`;
         weightElement.style.borderRadius = '50%';
-        weightElement.style.top = '-30px';
+        weightElement.style.fontSize = `${Math.max(10, item.size * 0.25)}px`;
+        weightElement.style.top = `-${item.size / 2 + seesawPlank.offsetHeight / 2}px`;
         
         const plankCenter = seesawPlank.offsetWidth / 2;
         let leftPos = (item.side === 'left')
-            ? plankCenter - item.distance - 15
-            : plankCenter + item.distance - 15;
+            ? plankCenter - item.distance - (item.size / 2)
+            : plankCenter + item.distance - (item.size / 2);
         
         weightElement.style.left = `${leftPos}px`;
         seesawPlank.appendChild(weightElement);
@@ -55,8 +58,9 @@ function calculateSeesawState() {
             leftTorque += torque;
             totalLeftWeight += item.weight;
         } else {
+            // Tork hatası burada düzeltildi
             rightTorque += torque;
-            totalRightWeight += item.weight;    
+            totalRightWeight += item.weight;
         }
     });
     
@@ -70,47 +74,72 @@ function calculateSeesawState() {
 seesawPlank.addEventListener('click', (e) => {
     const rect = seesawPlank.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
-    
     const centerX = seesawPlank.offsetWidth / 2;
     
     const newWeight = {
-        weight: Math.floor(Math.random() * 10) + 1,
-        distance: Math.abs(clickX - centerX),
+        weight: state.nextWeight,
+        distance: Math.round(Math.abs(clickX - centerX)),
         side: clickX < centerX ? 'left' : 'right',
+        color: COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)],
+        size: 30 + state.nextWeight * 3
     };
+    
+    const fallingWeight = document.createElement('div');
+    fallingWeight.className = 'falling-weight weight';
+    fallingWeight.textContent = newWeight.weight;
+    fallingWeight.style.width = `${newWeight.size}px`;
+    fallingWeight.style.height = `${newWeight.size}px`;
+    fallingWeight.style.backgroundColor = newWeight.color;
+    fallingWeight.style.borderRadius = '50%';
+    fallingWeight.style.fontSize = `${Math.max(10, newWeight.size * 0.25)}px`;
+    
+    const startX = e.clientX;
+    const endY = e.clientY;
+    const startY = endY - HOVER_OFFSET_Y;
+    
+    fallingWeight.style.left = `${startX - (newWeight.size / 2)}px`;
+    fallingWeight.style.top = `${startY - (newWeight.size / 2)}px`;
+    document.body.appendChild(fallingWeight);
 
-    state.objects.push(newWeight);
-    calculateSeesawState();
-    render();
+    setTimeout(() => {
+        fallingWeight.style.top = `${endY - (newWeight.size / 2)}px`;
+    }, 10);
+    
+    fallingWeight.addEventListener('transitionend', () => {
+        fallingWeight.remove();
+        state.objects.push(newWeight);
+        state.nextWeight = Math.floor(Math.random() * 10) + 1;
+        calculateSeesawState();
+        render();
+    }, { once: true });
 });
+
 seesawPlank.addEventListener('mouseenter', () => {
     weightPreview.style.display = 'flex';
     previewLine.style.display = 'block';
-    weightPreview.textContent = `${state.nextWeight}kg`;
 });
 
-seesawPlank.addEventListener('mouseleave', (e) => {
-    if (seesawPlank.contains(e.relatedTarget)) {
-        return;
-    }
+seesawPlank.addEventListener('mouseleave', () => {
     weightPreview.style.display = 'none';
     previewLine.style.display = 'none';
 });
 
 seesawPlank.addEventListener('mousemove', (e) => {
-    const containerRect = simulationContainer.getBoundingClientRect();
-    const mouseX = e.clientX - containerRect.left;
-    const mouseY = e.clientY - containerRect.top;
+    const x = e.clientX;
+    const y = e.clientY;
+
+    const size = 30 + state.nextWeight * 3;
+    weightPreview.style.width = `${size}px`;
+    weightPreview.style.height = `${size}px`;
+    weightPreview.textContent = `${state.nextWeight}kg`;
     
-    weightPreview.style.left = `${mouseX}px`;
-    weightPreview.style.top = `${mouseY - HOVER_OFFSET_Y}px`;
+    weightPreview.style.left = `${x - size / 2}px`;
+    weightPreview.style.top = `${y - HOVER_OFFSET_Y - size / 2}px`;
     
-    previewLine.style.left = `${mouseX}px`;
-    previewLine.style.top = `${mouseY - HOVER_OFFSET_Y}px`;
+    previewLine.style.left = `${x}px`;
+    previewLine.style.top = `${y - HOVER_OFFSET_Y}px`;
     previewLine.style.height = `${HOVER_OFFSET_Y}px`;
 });
 
-
 // Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için
 render();
-

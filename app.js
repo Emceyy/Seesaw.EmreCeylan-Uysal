@@ -6,6 +6,10 @@ const state = {
     nextWeight: Math.floor(Math.random() * 10) + 1
 };
 
+const weightPreview = document.getElementById('weight-preview');
+const previewLine = document.getElementById('preview-line');
+const simulationContainer = document.getElementById('simulation-container');
+const HOVER_OFFSET_Y = 120;
 const seesawPlank = document.getElementById('seesaw-plank');
 
 function render() {
@@ -79,6 +83,34 @@ seesawPlank.addEventListener('click', (e) => {
     calculateSeesawState();
     render();
 });
+seesawPlank.addEventListener('mouseenter', () => {
+    weightPreview.style.display = 'flex';
+    previewLine.style.display = 'block';
+    weightPreview.textContent = `${state.nextWeight}kg`;
+});
+
+seesawPlank.addEventListener('mouseleave', (e) => {
+    if (seesawPlank.contains(e.relatedTarget)) {
+        return;
+    }
+    weightPreview.style.display = 'none';
+    previewLine.style.display = 'none';
+});
+
+seesawPlank.addEventListener('mousemove', (e) => {
+    const containerRect = simulationContainer.getBoundingClientRect();
+    const mouseX = e.clientX - containerRect.left;
+    const mouseY = e.clientY - containerRect.top;
+    
+    weightPreview.style.left = `${mouseX}px`;
+    weightPreview.style.top = `${mouseY - HOVER_OFFSET_Y}px`;
+    
+    previewLine.style.left = `${mouseX}px`;
+    previewLine.style.top = `${mouseY - HOVER_OFFSET_Y}px`;
+    previewLine.style.height = `${HOVER_OFFSET_Y}px`;
+});
+
 
 // Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için
 render();
+

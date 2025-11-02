@@ -97,3 +97,31 @@ body {
     font-size: 12px;
     font-weight: bold;
 }
+
+#weight-preview {
+    position: absolute;
+    display: none;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(52, 152, 219, 0.7);
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transform: translate(-50%, -120%);
+    z-index: 10;
+}
+
+#preview-line {
+    display: none;
+    position: absolute;
+    width: 2px;
+    background-image: linear-gradient(to bottom, #3498db 60%, transparent 40%);
+    background-size: 100% 10px;
+    pointer-events: none;
+    z-index: 9;
+    transform: translateX(-50%);
+}

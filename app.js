@@ -94,11 +94,13 @@ function calculateSeesawState() {
 }
 
 function logAction(message) {
-  const logItem = document.createElement("div");
-  logItem.className = "log-item";
-  logItem.innerHTML = `<span>📦</span> ${message}`;
-  logContainer.appendChild(logItem);
-  logContainer.scrollTop = logContainer.scrollHeight;
+
+    const logItem = document.createElement('div');
+    logItem.className = 'log-item';
+    logItem.innerHTML = `<span>📦</span> ${message}`; 
+    logContainer.appendChild(logItem);
+    logContainer.scrollTop = logContainer.scrollHeight;
+
 }
 
 function saveState() {
@@ -193,24 +195,25 @@ seesawPlank.addEventListener("mousemove", (e) => {
   previewLine.style.height = `${HOVER_OFFSET_Y - size / 2}px`;
 });
 
-resetButton.addEventListener("click", () => {
-  state.objects = [];
-  state.angle = 0;
-  state.totalLeftWeight = 0;
-  state.totalRightWeight = 0;
-  localStorage.removeItem("seesawState");
-  logContainer.innerHTML = "";
-  render();
+
+resetButton.addEventListener('click', () => {
+    state.objects = [];
+    state.angle = 0;
+    state.totalLeftWeight = 0;
+    state.totalRightWeight = 0;
+    localStorage.removeItem('seesawState'); 
+    logContainer.innerHTML = '';
+    render();
 });
 
-if (loadState()) {
-  calculateSeesawState();
+// Local storage ile veriler kaybolmayacak
+if (loadState()) { 
+    calculateSeesawState();
+ 
+    state.objects.forEach(obj => {
+        logAction(`${obj.weight}kg dropped on ${obj.side} side at ${obj.distance}px from center`);
+    });
 
-  state.objects.forEach((obj) => {
-    logAction(
-      `${obj.weight}kg dropped on ${obj.side} side at ${obj.distance}px from center`
-    );
-  });
 }
 
 // Sayfa ilk yüklendiğinde panellerin doğru değeri göstermesi için

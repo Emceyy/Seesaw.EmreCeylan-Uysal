@@ -75,7 +75,6 @@ function calculateSeesawState() {
 function logAction(message) {
     const logItem = document.createElement('div');
     logItem.className = 'log-item';
-    // YENİ: İkonu ekle
     logItem.innerHTML = `<span>📦</span> ${message}`; 
     logContainer.appendChild(logItem);
     logContainer.scrollTop = logContainer.scrollHeight;
@@ -173,7 +172,7 @@ resetButton.addEventListener('click', () => {
     state.angle = 0;
     state.totalLeftWeight = 0;
     state.totalRightWeight = 0;
-    localStorage.removeItem('seesawState'); // YENİ
+    localStorage.removeItem('seesawState'); 
     logContainer.innerHTML = '';
     render();
 });
